@@ -5,12 +5,9 @@ This module provides helper functions for querying track data,
 generating statistics, and analyzing popularity trends.
 """
 
-from typing import Optional
-
-from sqlalchemy import func
 from sqlalchemy.orm import Session, joinedload
 
-from app.db.database import SessionLocal, get_db_context
+from app.db.database import get_db_context
 from app.db.models import Track, TrackSnapshot
 
 

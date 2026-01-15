@@ -17,7 +17,6 @@ Usage:
 import logging
 import os
 from dataclasses import dataclass
-from typing import Optional
 
 import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials

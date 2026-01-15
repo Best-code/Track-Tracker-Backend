@@ -8,7 +8,7 @@ Usage:
     uv run python -m tests.test_spotify
 """
 
-from app.ingestion.spotify.ingest_to_db import get_spotify_client
+from app.ingestion.spotify.spotify_to_db import get_spotify_client
 
 
 def run_api_tests() -> None:
@@ -24,6 +24,7 @@ def run_api_tests() -> None:
     # Test 1: Search
     print("1. Search: ", end="")
     results = sp.search(q="Kendrick", type="track", limit=1)
+    results
     print("OK")
 
     # Test 2: Get track by ID
