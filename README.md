@@ -31,7 +31,6 @@ track-tracker/
 │   ├── ingestion/          # API polling scripts
 │   ├── processing/         # Data transformation
 │   ├── api/                # FastAPI backend
-│   ├── dashboard/          # NextJS frontend
 │   ├── airflow/            # DAG definitions
 │   └── infrastructure/     # Terraform configs
 ├── tests/

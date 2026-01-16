@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:16
+    container_name: track-tracker-db
+    environment:
+      POSTGRES_USER: tracker
+      POSTGRES_PASSWORD: tracker_password
+      POSTGRES_DB: track_tracker
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
