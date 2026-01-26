@@ -1,4 +1,3 @@
 """
 Spotify API integration module.
 """
-

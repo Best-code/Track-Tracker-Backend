@@ -6,7 +6,7 @@ from typing import Optional
 class Artist:
     # Required Fields
     id: str
-    href: str 
+    href: str
 
     # Optional Fields
     name: Optional[str] = None
@@ -31,7 +31,7 @@ class IndividualTrack:
     name: Optional[str] = None
     uri: Optional[str] = None
     type: Optional[str] = None
-    duration_ms: Optional[int] = None   
+    duration_ms: Optional[int] = None
     explicit: Optional[bool] = None
     popularity: Optional[int] = None
     disc_number: Optional[int] = None
