@@ -92,6 +92,14 @@ class SpotifyHandler:
 
     """ Track Fetching Functions """
 
+    def get_track_id_by_title(self, title: str) -> str | None:
+        results = self.client.search(q=title, type="track", limit=1)
+        items = results.get("tracks", {}).get("items", [])
+        if not items:
+            return None
+        
+        return self._parse_track(items[0].get("id"))
+
     def get_saved_tracks(self) -> list[IndividualTrack]:
         results = self._paginate(self.client.current_user_saved_tracks)
         tracks: list[IndividualTrack] = []
