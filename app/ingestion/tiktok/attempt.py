@@ -1,4 +1,4 @@
-from .data_classes import Author, Sound, Video
+from .data_classes import Author, Sound
 from .exceptions import TikTokSoundCreationError, TikTokAuthorCreationError
 
 from TikTokApi import TikTokApi
@@ -41,7 +41,7 @@ def sound_from_tiktok_sound(tiktok_sound: sound.Sound) -> Sound | None:
         author=author,
         tiktok_id=tiktok_sound.id,
         duration_s=tiktok_sound.duration,
-        is_original=tiktok_sound.original
+        is_original=tiktok_sound.original,
     )
 
 
@@ -60,8 +60,8 @@ async def trending_videos():
                 if parsed_sound := sound_from_tiktok_sound(tiktok_sound=current_sound):
                     print(parsed_sound)
             except (TikTokSoundCreationError, TikTokAuthorCreationError) as e:
-                logger.error(
-                    f"Failed to create Sound : {current_sound.id} | {str(e)}")
+                logger.error(f"Failed to create Sound : {current_sound.id} | {str(e)}")
+
 
 if __name__ == "__main__":
     asyncio.run(trending_videos())
