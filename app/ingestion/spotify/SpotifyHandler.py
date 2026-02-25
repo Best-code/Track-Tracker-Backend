@@ -100,7 +100,7 @@ class SpotifyHandler:
         if not items:
             return None
 
-        return self._parse_track(items[0].get("id"))
+        return items[0].get("id")
 
     # Current User Information
 
