@@ -21,12 +21,10 @@ ms_token = os.environ.get("ms_token", None)
 
 
 def sound_from_tiktok_sound(tiktok_sound: sound.Sound) -> Sound | None:
-    if not getattr(tiktok_sound, "title", None):
+    if not getattr(tiktok_sound, "title"):
         raise TikTokSoundCreationError("Sound class lacks a Name")
 
     if tiktok_sound.title == "original sound":
-        # logger.info(
-            # f"Sound {tiktok_sound.id} title was 'original sound' - Skipping")
         return None
 
     if not getattr(tiktok_sound, "author", None):
