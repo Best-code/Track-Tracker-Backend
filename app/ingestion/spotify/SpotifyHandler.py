@@ -14,7 +14,7 @@ class SpotifyHandler:
             auth_manager=SpotifyOAuth(
                 client_id=os.getenv("SPOTIFY_CLIENT_ID"),
                 client_secret=os.getenv("SPOTIFY_CLIENT_SECRET"),
-                # redirect_uri=os.getenv("SPOTIFY_REDIRECT_URI"),
+                redirect_uri=os.getenv("SPOTIFY_REDIRECT_URI"),
             )
         )
 
@@ -68,7 +68,8 @@ class SpotifyHandler:
         return self._parse_artist(artist_data)
 
     def _parse_track(self, track_data: dict) -> IndividualTrack:
-        artists = [self._parse_artist(a) for a in track_data.get("artists", [])]
+        artists = [self._parse_artist(a)
+                   for a in track_data.get("artists", [])]
 
         return IndividualTrack(
             id=track_data["id"],
@@ -94,11 +95,14 @@ class SpotifyHandler:
 
     def get_track_id_by_title(self, title: str) -> str | None:
         results = self.client.search(q=title, type="track", limit=1)
+        print(results)
         items = results.get("tracks", {}).get("items", [])
         if not items:
             return None
-        
+
         return self._parse_track(items[0].get("id"))
+
+    # Current User Information
 
     def get_saved_tracks(self) -> list[IndividualTrack]:
         results = self._paginate(self.client.current_user_saved_tracks)

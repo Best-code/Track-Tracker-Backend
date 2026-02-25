@@ -35,7 +35,7 @@ format:
 
 # Run tests (mocked, no env needed)
 test:
-	uv run pytest tests/ -v
+	uv run pytest tests/ app/ingestion/spotify/test_spotify.py -v
 
 # Run CLI application
 run:
