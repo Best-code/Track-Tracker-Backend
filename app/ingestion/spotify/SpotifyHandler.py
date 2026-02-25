@@ -119,3 +119,7 @@ class SpotifyHandler:
             if track_data:
                 tracks.append(self._parse_track(track_data))
         return tracks
+
+        def get_track(self, track_id: str) -> IndividualTrack:
+        track_data = self.client.track(track_id)
+        return self._parse_track(track_data)
