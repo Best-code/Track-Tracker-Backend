@@ -10,7 +10,6 @@ class Video:
 
     # Optional Fields
     author: Optional[Author] = None
-    tiktok_id: Optional[str] = None
     stats: Optional[dict] = None
     create_time: Optional[datetime] = None
 
