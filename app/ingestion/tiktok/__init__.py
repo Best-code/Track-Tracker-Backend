@@ -1,3 +1,0 @@
-"""
-TikTok API ingestion module.
-"""
