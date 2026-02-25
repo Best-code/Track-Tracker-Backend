@@ -16,7 +16,9 @@ MOCK_SEARCH_RESPONSE = {
                     "album_type": "album",
                     "artists": [
                         {
-                            "external_urls": {"spotify": "https://open.spotify.com/artist/5pKCCKE2ajJHZ9KAiaK11H"},
+                            "external_urls": {
+                                "spotify": "https://open.spotify.com/artist/5pKCCKE2ajJHZ9KAiaK11H"
+                            },
                             "href": "https://api.spotify.com/v1/artists/5pKCCKE2ajJHZ9KAiaK11H",
                             "id": "5pKCCKE2ajJHZ9KAiaK11H",
                             "name": "Rihanna",
@@ -25,7 +27,9 @@ MOCK_SEARCH_RESPONSE = {
                         }
                     ],
                     "available_markets": ["US"],
-                    "external_urls": {"spotify": "https://open.spotify.com/album/2g1EakEaW7fPTZC6vBmBCn"},
+                    "external_urls": {
+                        "spotify": "https://open.spotify.com/album/2g1EakEaW7fPTZC6vBmBCn"
+                    },
                     "href": "https://api.spotify.com/v1/albums/2g1EakEaW7fPTZC6vBmBCn",
                     "id": "2g1EakEaW7fPTZC6vBmBCn",
                     "images": [],
@@ -39,7 +43,9 @@ MOCK_SEARCH_RESPONSE = {
                 },
                 "artists": [
                     {
-                        "external_urls": {"spotify": "https://open.spotify.com/artist/5pKCCKE2ajJHZ9KAiaK11H"},
+                        "external_urls": {
+                            "spotify": "https://open.spotify.com/artist/5pKCCKE2ajJHZ9KAiaK11H"
+                        },
                         "href": "https://api.spotify.com/v1/artists/5pKCCKE2ajJHZ9KAiaK11H",
                         "id": "5pKCCKE2ajJHZ9KAiaK11H",
                         "name": "Rihanna",
@@ -52,7 +58,9 @@ MOCK_SEARCH_RESPONSE = {
                 "duration_ms": 242680,
                 "explicit": False,
                 "external_ids": {"isrc": "USUM71118074"},
-                "external_urls": {"spotify": "https://open.spotify.com/track/5WQQIDU3HRaMyPkob8mpFb"},
+                "external_urls": {
+                    "spotify": "https://open.spotify.com/track/5WQQIDU3HRaMyPkob8mpFb"
+                },
                 "href": "https://api.spotify.com/v1/tracks/5WQQIDU3HRaMyPkob8mpFb",
                 "id": "5WQQIDU3HRaMyPkob8mpFb",
                 "is_local": False,
@@ -75,5 +83,10 @@ def test_where_have_you_been(monkeypatch):
     monkeypatch.setattr(SpotifyHandler, "_create_client", lambda self: mock_client)
 
     handler = SpotifyHandler()
-    track_id = handler.get_track_id_by_title("Rihana - Where Have You Been")
-    assert track_id == "5WQQIDU3HRaMyPkob8mpFb"
+    track = handler.get_track_by_title("Rihana - Where Have You Been")
+    assert track.id == "5WQQIDU3HRaMyPkob8mpFb"
+    assert track.name == "Where Have You Been"
+    assert track.duration_ms == 242680
+    assert track.explicit is False
+    assert track.artists[0].name == "Rihanna"
+    assert track.artists[0].id == "5pKCCKE2ajJHZ9KAiaK11H"

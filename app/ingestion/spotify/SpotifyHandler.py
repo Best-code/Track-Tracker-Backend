@@ -68,8 +68,7 @@ class SpotifyHandler:
         return self._parse_artist(artist_data)
 
     def _parse_track(self, track_data: dict) -> IndividualTrack:
-        artists = [self._parse_artist(a)
-                   for a in track_data.get("artists", [])]
+        artists = [self._parse_artist(a) for a in track_data.get("artists", [])]
 
         return IndividualTrack(
             id=track_data["id"],
@@ -93,14 +92,14 @@ class SpotifyHandler:
 
     """ Track Fetching Functions """
 
-    def get_track_id_by_title(self, title: str) -> str | None:
+    def get_track_by_title(self, title: str) -> IndividualTrack | None:
         results = self.client.search(q=title, type="track", limit=1)
-        print(results)
         items = results.get("tracks", {}).get("items", [])
         if not items:
             return None
 
-        return items[0].get("id")
+        track_data = items[0]
+        return self._parse_track(track_data=track_data)
 
     # Current User Information
 
