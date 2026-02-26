@@ -53,9 +53,7 @@ class SpotifyHandler:
     def _parse_artist(self, artist_data: dict) -> Artist:
         return Artist(
             spotify_id=artist_data["id"],
-            spotify_href=artist_data["href"],
             name=artist_data.get("name"),
-            spotify_uri=artist_data.get("uri"),
             spotify_type=artist_data.get("type"),
             spotify_external_urls=artist_data.get("external_urls"),
             spotify_genres=artist_data.get("genres", []),
@@ -72,16 +70,11 @@ class SpotifyHandler:
 
         track = Track(
             spotify_id=track_data["id"],
-            spotify_href=track_data["href"],
             name=track_data.get("name"),
-            spotify_uri=track_data.get("uri"),
             spotify_type=track_data.get("type"),
             spotify_duration_ms=track_data.get("duration_ms"),
             spotify_explicit=track_data.get("explicit"),
             spotify_popularity=track_data.get("popularity"),
-            spotify_disc_number=track_data.get("disc_number"),
-            spotify_track_number=track_data.get("track_number"),
-            spotify_is_local=track_data.get("is_local"),
             spotify_preview_url=track_data.get("preview_url"),
             spotify_available_markets=track_data.get("available_markets", []),
             spotify_external_urls=track_data.get("external_urls"),
