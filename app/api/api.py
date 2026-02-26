@@ -46,6 +46,7 @@ async def login(form_data: Annotated[OAuth2PasswordRequestForm, Depends()]):
 
     return {"access_token": user.username, "token_type": "bearer"}
 
+
 @app.get("/test/")
 async def test(token: Annotated[str, Depends(oauth2_scheme)]):
     return {"token": token}

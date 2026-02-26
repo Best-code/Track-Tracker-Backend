@@ -3,15 +3,14 @@ Defines the PostgreSQL schema for tracking rising music tracks
 across Spotify and TikTok platforms.
 """
 
-from sqlalchemy import (
-    Column, Integer, String, Boolean, JSON, ForeignKey, TIMESTAMP
-)
+from sqlalchemy import Column, Integer, String, Boolean, JSON, ForeignKey, TIMESTAMP
 from sqlalchemy.orm import declarative_base, relationship
 
 Base = declarative_base()
 
 
 # === Core Entities ===
+
 
 class Artist(Base):
     """
@@ -21,6 +20,7 @@ class Artist(Base):
     columns are nullable because an artist may only exist on one platform
     initially.
     """
+
     __tablename__ = "Artist"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
@@ -53,6 +53,7 @@ class Track(Base):
     spotify_popularity (0-100) is a key signal for detecting rising tracks.
     JSON columns store nested API response data (external_urls, markets, etc).
     """
+
     __tablename__ = "Track"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
@@ -86,6 +87,7 @@ class Track(Base):
 
 # === Junction Tables ===
 
+
 class TrackArtist(Base):
     """
     Many-to-many relationship between Track and Artist.
@@ -95,6 +97,7 @@ class TrackArtist(Base):
       - "featured" : featured collaborator
       - "producer" : track producer
     """
+
     __tablename__ = "TrackArtist"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
@@ -109,6 +112,7 @@ class TrackArtist(Base):
 
 # === Platform-Specific Entities ===
 
+
 class Video(Base):
     """
     TikTok videos that use a tracked song as their sound.
@@ -116,6 +120,7 @@ class Video(Base):
     author_id references Artist because TikTok creators are stored
     in the Artist table alongside music artists.
     """
+
     __tablename__ = "Video"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
@@ -142,6 +147,7 @@ class VideoStat(Base):
     This design is flexible -- if TikTok adds a new metric,
     no schema migration is needed.
     """
+
     __tablename__ = "VideoStat"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
