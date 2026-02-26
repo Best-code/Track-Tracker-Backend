@@ -66,25 +66,21 @@ def main() -> int:
         "-v", "--verbose", action="store_true", help="Enable verbose logging"
     )
 
-    subparsers = parser.add_subparsers(
-        dest="command", help="Available commands")
+    subparsers = parser.add_subparsers(dest="command", help="Available commands")
 
     # Ingest command
-    ingest_parser = subparsers.add_parser(
-        "ingest", help="Run Spotify ingestion")
+    ingest_parser = subparsers.add_parser("ingest", help="Run Spotify ingestion")
     ingest_parser.add_argument(
         "--limit", type=int, default=20, help="Number of albums to fetch (default: 20)"
     )
     ingest_parser.set_defaults(func=cmd_ingest)
 
     # Stats command
-    stats_parser = subparsers.add_parser(
-        "stats", help="Show database statistics")
+    stats_parser = subparsers.add_parser("stats", help="Show database statistics")
     stats_parser.set_defaults(func=cmd_stats)
 
     # Init-db command
-    init_parser = subparsers.add_parser(
-        "init-db", help="Initialize database tables")
+    init_parser = subparsers.add_parser("init-db", help="Initialize database tables")
     init_parser.set_defaults(func=cmd_init_db)
 
     args = parser.parse_args()

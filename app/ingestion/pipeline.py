@@ -49,8 +49,7 @@ def save_tracks_to_db(parsed_tracks: list[ParsedTrack]) -> None:
 
             # Upsert track
             existing_track = (
-                session.query(Track).filter_by(
-                    spotify_id=track.spotify_id).first()
+                session.query(Track).filter_by(spotify_id=track.spotify_id).first()
             )
             if existing_track:
                 db_track = existing_track
