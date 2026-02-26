@@ -83,10 +83,13 @@ def test_where_have_you_been(monkeypatch):
     monkeypatch.setattr(SpotifyHandler, "_create_client", lambda self: mock_client)
 
     handler = SpotifyHandler()
-    track = handler.get_track_by_title("Rihana - Where Have You Been")
-    assert track.id == "5WQQIDU3HRaMyPkob8mpFb"
-    assert track.name == "Where Have You Been"
-    assert track.duration_ms == 242680
-    assert track.explicit is False
-    assert track.artists[0].name == "Rihanna"
-    assert track.artists[0].id == "5pKCCKE2ajJHZ9KAiaK11H"
+    result = handler.get_track_by_title("Rihana - Where Have You Been")
+
+    assert result is not None
+    assert result.track.spotify_id == "5WQQIDU3HRaMyPkob8mpFb"
+    assert result.track.name == "Where Have You Been"
+    assert result.track.spotify_duration_ms == 242680
+    assert result.track.spotify_explicit is False
+    assert len(result.artists) == 1
+    assert result.artists[0].name == "Rihanna"
+    assert result.artists[0].spotify_id == "5pKCCKE2ajJHZ9KAiaK11H"
