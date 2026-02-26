@@ -4,8 +4,7 @@ across Spotify and TikTok platforms.
 """
 
 from sqlalchemy import (
-    Column, Integer, String, Boolean, JSON, ForeignKey, TIMESTAMP,
-    create_engine, UniqueConstraint
+    Column, Integer, String, Boolean, JSON, ForeignKey, TIMESTAMP
 )
 from sqlalchemy.orm import declarative_base, relationship
 
