@@ -68,8 +68,7 @@ class SpotifyHandler:
         return self._parse_artist(artist_data)
 
     def _parse_track(self, track_data: dict) -> ParsedTrack:
-        artists = [self._parse_artist(a)
-                   for a in track_data.get("artists", [])]
+        artists = [self._parse_artist(a) for a in track_data.get("artists", [])]
 
         track = Track(
             spotify_id=track_data["id"],
