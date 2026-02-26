@@ -30,12 +30,10 @@ def setup_logging(verbose: bool = False) -> None:
 
 def cmd_ingest(args: argparse.Namespace) -> int:
     """Run Spotify ingestion pipeline."""
-    from app.ingestion.spotify.spotify_to_db import ingest_new_releases
+    from app.ingestion.pipeline import run_pipeline
 
-    result = ingest_new_releases(limit=args.limit)
-    print(
-        f"Ingested {result.tracks_processed} tracks, {result.snapshots_created} snapshots"
-    )
+    result = run_pipeline()
+    print(f"Ingested {result.tracks_processed} tracks")
 
     if result.errors > 0:
         print(f"Encountered {result.errors} errors during ingestion")
@@ -68,21 +66,25 @@ def main() -> int:
         "-v", "--verbose", action="store_true", help="Enable verbose logging"
     )
 
-    subparsers = parser.add_subparsers(dest="command", help="Available commands")
+    subparsers = parser.add_subparsers(
+        dest="command", help="Available commands")
 
     # Ingest command
-    ingest_parser = subparsers.add_parser("ingest", help="Run Spotify ingestion")
+    ingest_parser = subparsers.add_parser(
+        "ingest", help="Run Spotify ingestion")
     ingest_parser.add_argument(
         "--limit", type=int, default=20, help="Number of albums to fetch (default: 20)"
     )
     ingest_parser.set_defaults(func=cmd_ingest)
 
     # Stats command
-    stats_parser = subparsers.add_parser("stats", help="Show database statistics")
+    stats_parser = subparsers.add_parser(
+        "stats", help="Show database statistics")
     stats_parser.set_defaults(func=cmd_stats)
 
     # Init-db command
-    init_parser = subparsers.add_parser("init-db", help="Initialize database tables")
+    init_parser = subparsers.add_parser(
+        "init-db", help="Initialize database tables")
     init_parser.set_defaults(func=cmd_init_db)
 
     args = parser.parse_args()

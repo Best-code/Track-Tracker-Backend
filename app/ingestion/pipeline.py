@@ -1,5 +1,7 @@
+from typing import List
+
 from app.ingestion.spotify.SpotifyHandler import SpotifyHandler
-from app.ingestion.data_classes import ParsedTrack
+from app.ingestion.data_classes import ParsedTrack, PipelineResult
 from app.db.models import Artist, Track, TrackArtist
 from app.db.session import SessionLocal
 
@@ -28,9 +30,10 @@ def tiktok_to_spotify(titles: list[str]) -> list[ParsedTrack]:
 def save_tracks_to_db(parsed_tracks: list[ParsedTrack]) -> None:
     with SessionLocal() as session:
         for parsed in parsed_tracks:
-            track, artists = parsed.track, parsed.artists
+            track: Track = parsed.track
+            artists: List[Artist] = parsed.artists
             # Upsert artists
-            db_artists = []
+            db_artists: List[Artist] = []
             for artist in artists:
                 existing = (
                     session.query(Artist)
@@ -46,7 +49,8 @@ def save_tracks_to_db(parsed_tracks: list[ParsedTrack]) -> None:
 
             # Upsert track
             existing_track = (
-                session.query(Track).filter_by(spotify_id=track.spotify_id).first()
+                session.query(Track).filter_by(
+                    spotify_id=track.spotify_id).first()
             )
             if existing_track:
                 db_track = existing_track
@@ -63,6 +67,7 @@ def save_tracks_to_db(parsed_tracks: list[ParsedTrack]) -> None:
                     .first()
                 )
                 if not exists:
+                    # TODO Determine role primary / featured / producer
                     link = TrackArtist(
                         track_id=db_track.id,
                         artist_id=artist.id,
@@ -73,7 +78,8 @@ def save_tracks_to_db(parsed_tracks: list[ParsedTrack]) -> None:
         session.commit()
 
 
-def run_pipeline():
+def run_pipeline() -> PipelineResult:
     titles = get_tiktok_song_titles()
     parsed_tracks = tiktok_to_spotify(titles)
     save_tracks_to_db(parsed_tracks)
+    return PipelineResult(tracks_processed=len(parsed_tracks))

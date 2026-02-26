@@ -16,3 +16,11 @@ class ParsedTrack:
 
     track: Track
     artists: list[Artist] = field(default_factory=list)
+
+
+@dataclass
+class PipelineResult:
+    """Summary of a pipeline run, returned by run_pipeline()."""
+
+    tracks_processed: int = 0
+    errors: int = 0
