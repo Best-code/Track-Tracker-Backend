@@ -83,6 +83,34 @@ class Track(Base):
     # Relationships
     artist_links = relationship("TrackArtist", back_populates="track")
     videos = relationship("Video", back_populates="track")
+    snapshots = relationship("TrackSnapshot", back_populates="track")
+
+
+# === Time-Series Data ===
+
+
+class TrackSnapshot(Base):
+    """
+    Point-in-time snapshot of a track's stats.
+
+    Every time ingestion runs, a new row is appended for each track
+    rather than overwriting previous values. This creates a time-series
+    history so we can detect momentum (e.g. popularity jumping from 40
+    to 65 over three days).
+
+    Many-to-one with Track: one track has many snapshots over time.
+    """
+
+    __tablename__ = "TrackSnapshot"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    track_id = Column(Integer, ForeignKey("Track.id"), nullable=False)
+    spotify_popularity = Column(Integer, nullable=True)
+    spotify_followers = Column(Integer, nullable=True)
+    recorded_at = Column(TIMESTAMP, nullable=False, server_default="now()")
+
+    # Relationship
+    track = relationship("Track", back_populates="snapshots")
 
 
 # === Junction Tables ===
