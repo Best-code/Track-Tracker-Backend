@@ -15,7 +15,7 @@ Usage:
 
 import logging
 
-from app.db.models import Artist, Track, TrackArtist, TrackSnapshot, Video, VideoStat
+from app.db.models import Artist, Track, TrackArtist, Video, VideoStat
 from app.db.session import SessionLocal
 
 logger = logging.getLogger(__name__)
@@ -36,7 +36,6 @@ def show_stats() -> None:
     with SessionLocal() as session:
         artist_count = session.query(Artist).count()
         track_count = session.query(Track).count()
-        snapshot_count = session.query(TrackSnapshot).count()
         link_count = session.query(TrackArtist).count()
         video_count = session.query(Video).count()
         stat_count = session.query(VideoStat).count()
@@ -44,10 +43,9 @@ def show_stats() -> None:
     print("=" * 40)
     print("  Track Tracker — Database Statistics")
     print("=" * 40)
-    print(f"  Artists:         {artist_count}")
-    print(f"  Tracks:          {track_count}")
-    print(f"  Track Snapshots: {snapshot_count}")
-    print(f"  Track-Artist:    {link_count}")
-    print(f"  Videos:          {video_count}")
-    print(f"  Video Stats:     {stat_count}")
+    print(f"  Artists:       {artist_count}")
+    print(f"  Tracks:        {track_count}")
+    print(f"  Track-Artist:  {link_count}")
+    print(f"  Videos:        {video_count}")
+    print(f"  Video Stats:   {stat_count}")
     print("=" * 40)
