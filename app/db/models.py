@@ -102,10 +102,10 @@ class TrackSnapshot(Base):
     Many-to-one with Track: one track has many snapshots over time.
     """
 
-    __tablename__ = "TrackSnapshot"
+    __tablename__ = "track_snapshot"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    track_id = Column(Integer, ForeignKey("Track.id"), nullable=False)
+    track_id = Column(Integer, ForeignKey("track.id"), nullable=False)
     spotify_popularity = Column(Integer, nullable=True)
     spotify_followers = Column(Integer, nullable=True)
     recorded_at = Column(TIMESTAMP, nullable=False, server_default="now()")
