@@ -16,3 +16,6 @@ __pycache__/
 
 # Claude
 .claude
+.vscode/launch.json
+.gitignore
+.vscode/settings.json
