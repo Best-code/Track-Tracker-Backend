@@ -1,20 +1,28 @@
 from typing import List
 
 from app.ingestion.spotify.SpotifyHandler import SpotifyHandler
+from app.ingestion.tiktok.TikTokHandler import TikTokHandler
 from app.ingestion.data_classes import ParsedTrack, PipelineResult
 from app.db.models import Artist, Track, TrackArtist
 from app.db.session import SessionLocal
+from app.logging_config import get_logger
+
+logger = get_logger(__name__)
 
 
-def get_tiktok_song_titles() -> list[str]:
-    # TODO: Replace with actual TikTok integration
-    return [
-        "Rihanna - Where Have You Been",
-        "Calvin Harris - Feel So Close",
-        "David Guetta - Titanium",
-        "Calvin Harris - Summer",
-        "David Guetta - Without You",
-    ]
+async def get_tiktok_song_titles() -> list[str]:
+    """Fetch song titles from TikTok hashtag searches."""
+    async with TikTokHandler() as tiktok:
+        sounds = await tiktok.search_hashtags()
+
+    titles = []
+    for s in sounds:
+        if s.author:
+            titles.append(f"{s.author.username} - {s.name}")
+        else:
+            titles.append(s.name)
+    logger.info(f"Got {len(titles)} song titles from TikTok")
+    return titles
 
 
 def tiktok_to_spotify(titles: list[str]) -> list[ParsedTrack]:
@@ -77,8 +85,8 @@ def save_tracks_to_db(parsed_tracks: list[ParsedTrack]) -> None:
         session.commit()
 
 
-def run_pipeline() -> PipelineResult:
-    titles = get_tiktok_song_titles()
+async def run_pipeline() -> PipelineResult:
+    titles = await get_tiktok_song_titles()
     parsed_tracks = tiktok_to_spotify(titles)
     save_tracks_to_db(parsed_tracks)
     return PipelineResult(tracks_processed=len(parsed_tracks))
