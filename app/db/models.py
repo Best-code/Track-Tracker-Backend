@@ -3,7 +3,15 @@ Defines the PostgreSQL schema for tracking rising music tracks
 across Spotify and TikTok platforms.
 """
 
-from sqlalchemy import Column, Integer, String, Boolean, JSON, ForeignKey, TIMESTAMP
+from sqlalchemy import (
+    Column,
+    Integer,
+    String,
+    Boolean,
+    JSON,
+    ForeignKey,
+    TIMESTAMP,
+)
 from sqlalchemy.orm import declarative_base, relationship
 
 Base = declarative_base()
@@ -21,15 +29,13 @@ class Artist(Base):
     initially.
     """
 
-    __tablename__ = "Artist"
+    __tablename__ = "artist"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String, nullable=True)
 
     # Spotify fields
     spotify_id = Column(String, nullable=True, unique=True)
-    spotify_href = Column(String, nullable=True)
-    spotify_uri = Column(String, nullable=True)
     spotify_type = Column(String, nullable=True)
     spotify_popularity = Column(Integer, nullable=True)
     spotify_external_urls = Column(JSON, nullable=True)
@@ -54,22 +60,17 @@ class Track(Base):
     JSON columns store nested API response data (external_urls, markets, etc).
     """
 
-    __tablename__ = "Track"
+    __tablename__ = "track"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String, nullable=True)
 
     # Spotify fields
     spotify_id = Column(String, nullable=True, unique=True)
-    spotify_href = Column(String, nullable=True)
-    spotify_uri = Column(String, nullable=True)
     spotify_type = Column(String, nullable=True)
     spotify_duration_ms = Column(Integer, nullable=True)
     spotify_explicit = Column(Boolean, nullable=True)
     spotify_popularity = Column(Integer, nullable=True)
-    spotify_disc_number = Column(Integer, nullable=True)
-    spotify_track_number = Column(Integer, nullable=True)
-    spotify_is_local = Column(Boolean, nullable=True)
     spotify_preview_url = Column(String, nullable=True)
     spotify_external_urls = Column(JSON, nullable=True)
     spotify_external_ids = Column(JSON, nullable=True)
@@ -126,11 +127,11 @@ class TrackArtist(Base):
       - "producer" : track producer
     """
 
-    __tablename__ = "TrackArtist"
+    __tablename__ = "track_artist"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    track_id = Column(Integer, ForeignKey("Track.id"), nullable=False)
-    artist_id = Column(Integer, ForeignKey("Artist.id"), nullable=False)
+    track_id = Column(Integer, ForeignKey("track.id"), nullable=False)
+    artist_id = Column(Integer, ForeignKey("artist.id"), nullable=False)
     role = Column(String, nullable=False)
 
     # Relationships
@@ -149,11 +150,11 @@ class Video(Base):
     in the Artist table alongside music artists.
     """
 
-    __tablename__ = "Video"
+    __tablename__ = "video"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    track_id = Column(Integer, ForeignKey("Track.id"), nullable=False)
-    author_id = Column(Integer, ForeignKey("Artist.id"), nullable=False)
+    track_id = Column(Integer, ForeignKey("track.id"), nullable=False)
+    author_id = Column(Integer, ForeignKey("artist.id"), nullable=False)
     tiktok_id = Column(String, nullable=True, unique=True)
     create_time = Column(TIMESTAMP, nullable=True)
 
@@ -176,10 +177,10 @@ class VideoStat(Base):
     no schema migration is needed.
     """
 
-    __tablename__ = "VideoStat"
+    __tablename__ = "video_stat"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    video_id = Column(Integer, ForeignKey("Video.id"), nullable=False)
+    video_id = Column(Integer, ForeignKey("video.id"), nullable=False)
     stat_name = Column(String, nullable=False)
     stat_value = Column(Integer, nullable=False)
     recorded_at = Column(TIMESTAMP, nullable=True)

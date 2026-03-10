@@ -1,7 +1,7 @@
 # Track Tracker Makefile
 # Common commands for development
 
-.PHONY: help install lint format test run serve init-db stats ingest clean push
+.PHONY: help install lint format test run serve services init-db stats ingest clean push
 
 # Environment file
 ENV_FILE = --env-file env/.env.development
@@ -16,9 +16,10 @@ help:
 	@echo "  make test       Run all tests (mocked, no env needed)"
 	@echo "  make run        Run the CLI application (shows help)"
 	@echo "  make serve      Start the FastAPI server (http://localhost:8000)"
-	@echo "  make init-db    Initialize database tables"
-	@echo "  make stats      Show database statistics"
-	@echo "  make ingest     Run Spotify ingestion"
+	@echo "  make services   Start Docker services (PostgreSQL)"
+	@echo "  make init-db    Start services + initialize database tables"
+	@echo "  make stats      Start services + show database statistics"
+	@echo "  make ingest     Start services + run Spotify ingestion"
 	@echo "  make clean      Remove cached files"
 	@echo "  make push m=\"msg\" Format, commit, and push to git"
 	@echo "  make psql       Open PostgreSQL shell"
@@ -35,27 +36,30 @@ format:
 
 # Run tests (mocked, no env needed)
 test:
-	uv run pytest tests/ -v
+	uv run pytest tests/ app/ingestion/spotify/test_spotify.py -v
 
 # Run CLI application
 run:
 	uv run $(ENV_FILE) python main.py
 
 # Start FastAPI server with hot reload
-serve:
-	docker compose up -d db
+serve: services
 	uv run $(ENV_FILE) uvicorn app.api.api:app --reload
 
+# Start Docker services
+services:
+	docker compose up -d db
+
 # Initialize database
-init-db:
+init-db: services
 	uv run $(ENV_FILE) python main.py init-db
 
 # Show stats
-stats:
+stats: services
 	uv run $(ENV_FILE) python main.py stats
 
 # Run ingestion
-ingest:
+ingest: services
 	uv run $(ENV_FILE) python main.py ingest
 
 # Clean up cached files

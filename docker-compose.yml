@@ -7,7 +7,7 @@ services:
       POSTGRES_PASSWORD: tracker_password
       POSTGRES_DB: track_tracker
     ports:
-      - "5432:5432"
+      - "5422:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
