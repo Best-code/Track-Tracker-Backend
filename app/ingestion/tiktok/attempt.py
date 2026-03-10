@@ -1,11 +1,10 @@
-from .constants import HASHTAGS, SEARCH_QUERIES
+from .constants import HASHTAGS
 from .data_classes import Author, Sound
 from .exceptions import TikTokSoundCreationError, TikTokAuthorCreationError
 from app.logging_config import get_logger
 
 from TikTokApi import TikTokApi
 from TikTokApi.api import sound
-import asyncio
 import os
 
 
@@ -58,7 +57,8 @@ async def search_hashtags(count_per_hashtag: int = 20) -> list[Sound]:
             logger.info(f"Search '{search_term}': {video_count} videos returned")
 
     logger.info(
-        f"Discovered {len(discovered_sounds)} unique sounds across {len(HASHTAGS)} hashtag searches")
+        f"Discovered {len(discovered_sounds)} unique sounds across {len(HASHTAGS)} hashtag searches"
+    )
     return discovered_sounds
 
 
