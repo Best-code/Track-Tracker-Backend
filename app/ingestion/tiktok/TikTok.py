@@ -1,6 +1,5 @@
 from .constants import HASHTAGS
 from .data_classes import Author, Sound
-from .exceptions import TikTokSoundCreationError, TikTokAuthorCreationError
 from app.logging_config import get_logger
 
 from TikTokApi import TikTokApi
@@ -37,24 +36,22 @@ async def search_hashtags(count_per_hashtag: int = 20) -> list[Sound]:
                 ):
                     video_count += 1
                     current_sound: sound.Sound = video.sound
-                    try:
-                        parsed_sound = _sound_from_tiktok_sound(
-                            tiktok_sound=current_sound
+
+                    parsed_sound = _sound_from_tiktok_sound(
+                        tiktok_sound=current_sound
+                    )
+                    if parsed_sound and parsed_sound.tiktok_id not in seen_ids:
+                        seen_ids.add(parsed_sound.tiktok_id)
+                        discovered_sounds.append(parsed_sound)
+                        logger.info(
+                            f"Found sound: {parsed_sound.name} "
+                            f"(id: {parsed_sound.tiktok_id})"
                         )
-                        if parsed_sound and parsed_sound.tiktok_id not in seen_ids:
-                            seen_ids.add(parsed_sound.tiktok_id)
-                            discovered_sounds.append(parsed_sound)
-                            logger.info(
-                                f"Found sound: {parsed_sound.name} "
-                                f"(id: {parsed_sound.tiktok_id})"
-                            )
-                    except (TikTokSoundCreationError, TikTokAuthorCreationError) as e:
-                        logger.error(
-                            f"Failed to create Sound : {current_sound.id} | {str(e)}"
-                        )
+
             except Exception as e:
                 logger.warning(f"Search failed for {search_term}: {e}")
-            logger.info(f"Search '{search_term}': {video_count} videos returned")
+            logger.info(
+                f"Search '{search_term}': {video_count} videos returned")
 
     logger.info(
         f"Discovered {len(discovered_sounds)} unique sounds across {len(HASHTAGS)} hashtag searches"
@@ -64,7 +61,7 @@ async def search_hashtags(count_per_hashtag: int = 20) -> list[Sound]:
 
 def _sound_from_tiktok_sound(tiktok_sound: sound.Sound) -> Sound | None:
     if not getattr(tiktok_sound, "title"):
-        raise TikTokSoundCreationError("Sound class lacks a Name")
+        return None
 
     if tiktok_sound.title == "original sound":
         return None
@@ -84,6 +81,4 @@ def _sound_from_tiktok_sound(tiktok_sound: sound.Sound) -> Sound | None:
         name=tiktok_sound.title,
         author=author,
         tiktok_id=tiktok_sound.id,
-        duration_s=tiktok_sound.duration,
-        is_original=tiktok_sound.original,
     )

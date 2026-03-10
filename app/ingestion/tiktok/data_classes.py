@@ -32,5 +32,3 @@ class Sound:
     # Optional fields
     author: Optional[Author] = None
     tiktok_id: Optional[str] = None
-    duration_s: Optional[int] = None
-    is_original: Optional[bool] = None
