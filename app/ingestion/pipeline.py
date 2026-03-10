@@ -29,9 +29,14 @@ def tiktok_to_spotify(titles: list[str]) -> list[ParsedTrack]:
     handler = SpotifyHandler()
     results = []
     for title in titles:
-        result = handler.get_track_by_title(title)
-        if result:
-            results.append(result)
+        try:
+            result = handler.get_track_by_title(title)
+            if result:
+                results.append(result)
+                logger.info(f"Matched: '{title}' -> {result.track.name}")
+        except Exception as e:
+            logger.error(f"Spotify lookup failed for '{title}': {e}")
+    logger.info(f"Matched {len(results)}/{len(titles)} titles on Spotify")
     return results
 
 
