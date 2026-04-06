@@ -4,6 +4,7 @@ across Spotify and TikTok platforms.
 """
 
 from sqlalchemy import (
+    BigInteger,
     Column,
     Integer,
     String,
@@ -70,7 +71,7 @@ class Track(Base):
     spotify_type = Column(String, nullable=True)
     spotify_duration_ms = Column(Integer, nullable=True)
     spotify_explicit = Column(Boolean, nullable=True)
-    spotify_popularity = Column(Integer, nullable=True)
+    spotify_popularity = Column(Integer, nullable=True)  # deprecated by Spotify API; kept for search/matching only
     spotify_preview_url = Column(String, nullable=True)
     spotify_external_urls = Column(JSON, nullable=True)
     spotify_external_ids = Column(JSON, nullable=True)
@@ -96,8 +97,8 @@ class TrackSnapshot(Base):
 
     Every time ingestion runs, a new row is appended for each track
     rather than overwriting previous values. This creates a time-series
-    history so we can detect momentum (e.g. popularity jumping from 40
-    to 65 over three days).
+    history so we can detect momentum (e.g. streams growing from 500k
+    to 2M over a week).
 
     Many-to-one with Track: one track has many snapshots over time.
     """
@@ -106,8 +107,7 @@ class TrackSnapshot(Base):
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     track_id = Column(Integer, ForeignKey("track.id"), nullable=False)
-    spotify_popularity = Column(Integer, nullable=True)
-    spotify_followers = Column(Integer, nullable=True)
+    spotify_streams = Column(BigInteger, nullable=True)  # scraped from open.spotify.com
     recorded_at = Column(TIMESTAMP, nullable=False, server_default="now()")
 
     # Relationship
