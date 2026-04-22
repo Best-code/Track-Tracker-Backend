@@ -1,6 +1,6 @@
 import os
 import spotipy
-from spotipy.oauth2 import SpotifyOAuth
+from spotipy.oauth2 import SpotifyClientCredentials
 
 from app.db.models import Artist, Track
 from app.ingestion.data_classes import ParsedTrack
@@ -12,10 +12,9 @@ class SpotifyHandler:
 
     def _create_client(self) -> spotipy.Spotify:
         return spotipy.Spotify(
-            auth_manager=SpotifyOAuth(
+            auth_manager=SpotifyClientCredentials(
                 client_id=os.getenv("SPOTIFY_CLIENT_ID"),
                 client_secret=os.getenv("SPOTIFY_CLIENT_SECRET"),
-                redirect_uri=os.getenv("SPOTIFY_REDIRECT_URI"),
             )
         )
 

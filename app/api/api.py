@@ -18,9 +18,9 @@ from .config import APP_CONFIG, CORS_CONFIG
 from ..db.place_holder_users import (
     fake_users_db,
 )  # This is a placeholder just so I could test the OAuth stuff
-from ..db.query import get_track_stats
+from ..db.query import get_top_tracks, get_track_stats
 from ..db.session import get_db
-from .models import TrackGrowthStats, UserInDB
+from .models import TrackGrowthStats, TrackListResponse, UserInDB
 
 # Create FastAPI app instance
 app = FastAPI(**APP_CONFIG)
@@ -53,6 +53,22 @@ async def login(form_data: Annotated[OAuth2PasswordRequestForm, Depends()]):
 @app.get("/test/")
 async def test(token: Annotated[str, Depends(oauth2_scheme)]):
     return {"token": token}
+
+
+@app.get("/tracks", response_model=TrackListResponse)
+def list_tracks(
+    q: str | None = None,
+    limit: int = 50,
+    db: Session = Depends(get_db),
+):
+    """
+    List tracks ranked by weekly stream growth.
+
+    Optional ?q= searches track name and primary artist name (case-insensitive).
+    Optional ?limit= caps the result count (default 50).
+    """
+    tracks = get_top_tracks(session=db, limit=limit, search=q)
+    return {"tracks": tracks, "count": len(tracks)}
 
 
 @app.get("/tracks/{track_id}/stats", response_model=TrackGrowthStats)

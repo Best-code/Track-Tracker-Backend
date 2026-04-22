@@ -8,11 +8,13 @@ dependencies = [
     "alembic>=1.18.4",
     "boto3>=1.42.27",
     "fastapi>=0.128.0",
+    "playwright>=1.58.0",
     "psycopg2-binary>=2.9.11",
     "python-multipart>=0.0.22",
     "requests>=2.32.5",
     "spotipy>=2.25.2",
     "sqlalchemy>=2.0.45",
+    "tiktokapi>=7.3.3",
     "uvicorn>=0.40.0",
 ]
 

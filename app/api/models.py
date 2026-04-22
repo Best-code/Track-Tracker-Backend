@@ -34,3 +34,20 @@ class TrackGrowthStats(BaseModel):
     latest_streams: int | None
     latest_recorded_at: str | None
     growth: dict[str, GrowthWindow]
+
+
+class TrackListItem(BaseModel):
+    """Single track entry returned by GET /tracks."""
+
+    track_id: int
+    track_name: str | None
+    artist_name: str | None
+    total_streams: int | None
+    daily_streams_change: int | None
+    weekly_growth_percent: float | None
+    rank: int
+
+
+class TrackListResponse(BaseModel):
+    tracks: list[TrackListItem]
+    count: int
