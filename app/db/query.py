@@ -295,9 +295,11 @@ def get_top_tracks(
         )
 
     results.sort(
-        key=lambda x: x["weekly_growth_percent"]
-        if x["weekly_growth_percent"] is not None
-        else float("-inf"),
+        key=lambda x: (
+            x["weekly_growth_percent"] if x["weekly_growth_percent"] is not None else float("-inf"),
+            x["daily_streams_change"] if x["daily_streams_change"] is not None else 0,
+            x["total_streams"] if x["total_streams"] is not None else 0,
+        ),
         reverse=True,
     )
 
