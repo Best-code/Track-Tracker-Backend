@@ -66,6 +66,8 @@ async def save_tracks_to_db(parsed_tracks: list[ParsedTrack]) -> None:
                 session.query(Track).filter_by(spotify_id=track.spotify_id).first()
             )
             if existing_track:
+                if not existing_track.spotify_album_image_url and track.spotify_album_image_url:
+                    existing_track.spotify_album_image_url = track.spotify_album_image_url
                 db_track = existing_track
             else:
                 session.add(track)

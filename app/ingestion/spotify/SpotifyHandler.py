@@ -67,6 +67,9 @@ class SpotifyHandler:
     def _parse_track(self, track_data: dict) -> ParsedTrack:
         artists = [self._parse_artist(a) for a in track_data.get("artists", [])]
 
+        images = track_data.get("album", {}).get("images", [])
+        album_image_url = images[0]["url"] if images else None
+
         track = Track(
             spotify_id=track_data["id"],
             name=track_data.get("name"),
@@ -78,6 +81,7 @@ class SpotifyHandler:
             spotify_available_markets=track_data.get("available_markets", []),
             spotify_external_urls=track_data.get("external_urls"),
             spotify_external_ids=track_data.get("external_ids"),
+            spotify_album_image_url=album_image_url,
         )
 
         return ParsedTrack(track=track, artists=artists)

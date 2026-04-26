@@ -42,6 +42,7 @@ class TrackListItem(BaseModel):
     track_id: int
     track_name: str | None
     artist_name: str | None
+    image_url: str | None
     total_streams: int | None
     daily_streams_change: int | None
     weekly_growth_percent: float | None

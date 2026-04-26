@@ -219,6 +219,7 @@ def get_top_tracks(
         session.query(
             Track.id,
             Track.name,
+            Track.spotify_album_image_url,
             primary_artist_sq.c.artist_name,
             LatestSnap.spotify_streams.label("latest_streams"),
             WeekSnap.spotify_streams.label("week_streams"),
@@ -286,6 +287,7 @@ def get_top_tracks(
                 "track_id": row.id,
                 "track_name": row.name,
                 "artist_name": row.artist_name,
+                "image_url": row.spotify_album_image_url,
                 "total_streams": latest,
                 "daily_streams_change": daily_change,
                 "weekly_growth_percent": weekly_growth,

@@ -77,6 +77,9 @@ class Track(Base):
     spotify_external_ids = Column(JSON, nullable=True)
     spotify_available_markets = Column(JSON, nullable=True)
 
+    # Album art
+    spotify_album_image_url = Column(String, nullable=True)
+
     # TikTok fields
     tiktok_sound_id = Column(String, nullable=True, unique=True)
     tiktok_duration_s = Column(Integer, nullable=True)
