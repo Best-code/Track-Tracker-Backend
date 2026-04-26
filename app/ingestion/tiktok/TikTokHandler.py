@@ -38,7 +38,7 @@ class TikTokHandler:
             raise RuntimeError("TikTokHandler must be used as an async context manager")
         return self._api
 
-    async def search_hashtags(self, count_per_hashtag: int = 20) -> list[Sound]:
+    async def search_hashtags(self, count_per_hashtag: int = 50) -> list[Sound]:
         """Search TikTok for hashtag terms targeting small/midsize artists with new releases."""
         seen_ids: set[str] = set()
         discovered_sounds: list[Sound] = []
