@@ -46,7 +46,7 @@ track-tracker/
 
 ### Prerequisites
 
-- Python 3.12+
+- Python 3.14+
 - Docker
 - AWS CLI configured
 - Terraform
