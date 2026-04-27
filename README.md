@@ -82,8 +82,8 @@ Create folder: Track-Tracker-Backend-increment-3/env/
 Create file: env/.env.development with this content:
 
 DATABASE_URL=postgresql://tracker:tracker_password@localhost:5422/track_tracker
-SPOTIFY_CLIENT_ID=cf36e0f3dadb4545bc3cee2062e33da5
-SPOTIFY_CLIENT_SECRET=8a2ae5ed7e4f4f52929044ea00591d21
+SPOTIFY_CLIENT_ID="id here"
+SPOTIFY_CLIENT_SECRET="key here"
 SPOTIFY_REDIRECT_URI=https://127.0.0.1:8888/callback
 
 3. Start Docker Desktop — open the Docker Desktop app and wait for the whale icon to show running.
