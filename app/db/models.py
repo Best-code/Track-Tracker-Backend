@@ -72,7 +72,9 @@ class Track(Base):
     spotify_type = Column(String, nullable=True)
     spotify_duration_ms = Column(Integer, nullable=True)
     spotify_explicit = Column(Boolean, nullable=True)
-    spotify_popularity = Column(Integer, nullable=True)  # deprecated by Spotify API; kept for search/matching only
+    spotify_popularity = Column(
+        Integer, nullable=True
+    )  # deprecated by Spotify API; kept for search/matching only
     spotify_preview_url = Column(String, nullable=True)
     spotify_external_urls = Column(JSON, nullable=True)
     spotify_external_ids = Column(JSON, nullable=True)
