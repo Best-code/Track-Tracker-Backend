@@ -52,3 +52,13 @@ class TrackListItem(BaseModel):
 class TrackListResponse(BaseModel):
     tracks: list[TrackListItem]
     count: int
+
+
+class SnapshotPoint(BaseModel):
+    recorded_at: str
+    streams: int | None
+
+
+class TrackSnapshotsResponse(BaseModel):
+    track_id: int
+    snapshots: list[SnapshotPoint]

@@ -18,9 +18,9 @@ from .config import APP_CONFIG, CORS_CONFIG
 from ..db.place_holder_users import (
     fake_users_db,
 )  # This is a placeholder just so I could test the OAuth stuff
-from ..db.query import get_top_tracks, get_track_stats
+from ..db.query import get_top_tracks, get_track_snapshots, get_track_stats
 from ..db.session import get_db
-from .models import TrackGrowthStats, TrackListResponse, UserInDB
+from .models import TrackGrowthStats, TrackListResponse, TrackSnapshotsResponse, UserInDB
 
 # Create FastAPI app instance
 app = FastAPI(**APP_CONFIG)
@@ -69,6 +69,13 @@ def list_tracks(
     """
     tracks = get_top_tracks(session=db, limit=limit, search=q)
     return {"tracks": tracks, "count": len(tracks)}
+
+
+@app.get("/tracks/{track_id}/snapshots", response_model=TrackSnapshotsResponse)
+def track_snapshots(track_id: int, days: int = 30, db: Session = Depends(get_db)):
+    """Return snapshot history for a track over the past `days` days."""
+    snaps = get_track_snapshots(track_id, session=db, days=days)
+    return {"track_id": track_id, "snapshots": snaps}
 
 
 @app.get("/tracks/{track_id}/stats", response_model=TrackGrowthStats)

@@ -151,6 +151,18 @@ def get_track_stats(track_id: int, session: Session) -> dict | None:
     }
 
 
+def get_track_snapshots(track_id: int, session: Session, days: int = 30) -> list[dict]:
+    """Return snapshots for a track recorded within the last `days` days, oldest first."""
+    cutoff = datetime.utcnow() - timedelta(days=days)
+    snaps = (
+        session.query(TrackSnapshot)
+        .filter(TrackSnapshot.track_id == track_id, TrackSnapshot.recorded_at >= cutoff)
+        .order_by(TrackSnapshot.recorded_at.asc())
+        .all()
+    )
+    return [{"recorded_at": s.recorded_at.isoformat(), "streams": s.spotify_streams} for s in snaps]
+
+
 def get_top_tracks(
     session: Session, limit: int = 50, search: str | None = None
 ) -> list[dict]:
@@ -280,7 +292,7 @@ def get_top_tracks(
 
         daily_change = None
         if latest is not None and day is not None:
-            daily_change = latest - day
+            daily_change = max(0, latest - day)
 
         results.append(
             {
