@@ -66,8 +66,13 @@ async def save_tracks_to_db(parsed_tracks: list[ParsedTrack]) -> None:
                 session.query(Track).filter_by(spotify_id=track.spotify_id).first()
             )
             if existing_track:
-                if not existing_track.spotify_album_image_url and track.spotify_album_image_url:
-                    existing_track.spotify_album_image_url = track.spotify_album_image_url
+                if (
+                    not existing_track.spotify_album_image_url
+                    and track.spotify_album_image_url
+                ):
+                    existing_track.spotify_album_image_url = (
+                        track.spotify_album_image_url
+                    )
                 db_track = existing_track
             else:
                 session.add(track)
@@ -98,9 +103,9 @@ async def save_tracks_to_db(parsed_tracks: list[ParsedTrack]) -> None:
             )
             session.add(snapshot)
             logger.info(
-                f"Snapshot recorded for '{db_track.name}' "
-                f"(streams={stream_count:,})" if stream_count else
-                f"Snapshot recorded for '{db_track.name}' (streams=None)"
+                f"Snapshot recorded for '{db_track.name}' (streams={stream_count:,})"
+                if stream_count
+                else f"Snapshot recorded for '{db_track.name}' (streams=None)"
             )
 
         session.commit()

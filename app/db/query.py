@@ -160,7 +160,10 @@ def get_track_snapshots(track_id: int, session: Session, days: int = 30) -> list
         .order_by(TrackSnapshot.recorded_at.asc())
         .all()
     )
-    return [{"recorded_at": s.recorded_at.isoformat(), "streams": s.spotify_streams} for s in snaps]
+    return [
+        {"recorded_at": s.recorded_at.isoformat(), "streams": s.spotify_streams}
+        for s in snaps
+    ]
 
 
 def get_top_tracks(
@@ -308,7 +311,9 @@ def get_top_tracks(
 
     results.sort(
         key=lambda x: (
-            x["weekly_growth_percent"] if x["weekly_growth_percent"] is not None else float("-inf"),
+            x["weekly_growth_percent"]
+            if x["weekly_growth_percent"] is not None
+            else float("-inf"),
             x["daily_streams_change"] if x["daily_streams_change"] is not None else 0,
             x["total_streams"] if x["total_streams"] is not None else 0,
         ),

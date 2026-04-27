@@ -20,7 +20,12 @@ from ..db.place_holder_users import (
 )  # This is a placeholder just so I could test the OAuth stuff
 from ..db.query import get_top_tracks, get_track_snapshots, get_track_stats
 from ..db.session import get_db
-from .models import TrackGrowthStats, TrackListResponse, TrackSnapshotsResponse, UserInDB
+from .models import (
+    TrackGrowthStats,
+    TrackListResponse,
+    TrackSnapshotsResponse,
+    UserInDB,
+)
 
 # Create FastAPI app instance
 app = FastAPI(**APP_CONFIG)
