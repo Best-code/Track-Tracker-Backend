@@ -1,8 +1,9 @@
 import os
 import spotipy
-from spotipy.oauth2 import SpotifyOAuth
+from spotipy.oauth2 import SpotifyClientCredentials
 
-from app.ingestion.spotify.data_classes import Artist, IndividualTrack
+from app.db.models import Artist, Track
+from app.ingestion.data_classes import ParsedTrack
 
 
 class SpotifyHandler:
@@ -11,10 +12,9 @@ class SpotifyHandler:
 
     def _create_client(self) -> spotipy.Spotify:
         return spotipy.Spotify(
-            auth_manager=SpotifyOAuth(
+            auth_manager=SpotifyClientCredentials(
                 client_id=os.getenv("SPOTIFY_CLIENT_ID"),
                 client_secret=os.getenv("SPOTIFY_CLIENT_SECRET"),
-                # redirect_uri=os.getenv("SPOTIFY_REDIRECT_URI"),
             )
         )
 
@@ -51,63 +51,68 @@ class SpotifyHandler:
 
     def _parse_artist(self, artist_data: dict) -> Artist:
         return Artist(
-            id=artist_data["id"],
-            href=artist_data["href"],
+            spotify_id=artist_data["id"],
             name=artist_data.get("name"),
-            uri=artist_data.get("uri"),
-            type=artist_data.get("type"),
-            external_urls=artist_data.get("external_urls"),
-            followers=artist_data.get("followers"),
-            genres=artist_data.get("genres", []),
-            images=artist_data.get("images", []),
-            popularity=artist_data.get("popularity"),
+            spotify_type=artist_data.get("type"),
+            spotify_external_urls=artist_data.get("external_urls"),
+            spotify_genres=artist_data.get("genres", []),
+            spotify_images=artist_data.get("images", []),
+            spotify_popularity=artist_data.get("popularity"),
         )
 
     def get_artist(self, artist_id: str) -> Artist:
         artist_data = self.client.artist(artist_id)
         return self._parse_artist(artist_data)
 
-    def _parse_track(self, track_data: dict) -> IndividualTrack:
+    def _parse_track(self, track_data: dict) -> ParsedTrack:
         artists = [self._parse_artist(a) for a in track_data.get("artists", [])]
 
-        return IndividualTrack(
-            id=track_data["id"],
-            href=track_data["href"],
-            artist_ids=[a.id for a in artists],
-            artists=artists,
+        images = track_data.get("album", {}).get("images", [])
+        album_image_url = images[0]["url"] if images else None
+
+        track = Track(
+            spotify_id=track_data["id"],
             name=track_data.get("name"),
-            uri=track_data.get("uri"),
-            type=track_data.get("type"),
-            duration_ms=track_data.get("duration_ms"),
-            explicit=track_data.get("explicit"),
-            popularity=track_data.get("popularity"),
-            disc_number=track_data.get("disc_number"),
-            track_number=track_data.get("track_number"),
-            is_local=track_data.get("is_local"),
-            preview_url=track_data.get("preview_url"),
-            available_markets=track_data.get("available_markets", []),
-            external_urls=track_data.get("external_urls"),
-            external_ids=track_data.get("external_ids"),
+            spotify_type=track_data.get("type"),
+            spotify_duration_ms=track_data.get("duration_ms"),
+            spotify_explicit=track_data.get("explicit"),
+            spotify_popularity=track_data.get("popularity"),
+            spotify_preview_url=track_data.get("preview_url"),
+            spotify_available_markets=track_data.get("available_markets", []),
+            spotify_external_urls=track_data.get("external_urls"),
+            spotify_external_ids=track_data.get("external_ids"),
+            spotify_album_image_url=album_image_url,
         )
 
-    """ Track Fetching Functions """
+        return ParsedTrack(track=track, artists=artists)
 
-    def get_saved_tracks(self) -> list[IndividualTrack]:
+    def get_track_by_title(self, title: str) -> ParsedTrack | None:
+        results = self.client.search(q=title, type="track", limit=1)
+        items = results.get("tracks", {}).get("items", [])
+        if not items:
+            return None
+
+        track_data = items[0]
+        return self._parse_track(track_data=track_data)
+
+    # Current User Information
+
+    def get_saved_tracks(self) -> list[ParsedTrack]:
         results = self._paginate(self.client.current_user_saved_tracks)
-        tracks: list[IndividualTrack] = []
+        parsed: list[ParsedTrack] = []
 
         for item in results:
             track_data = item["track"]
             if track_data:
-                tracks.append(self._parse_track(track_data))
-        return tracks
+                parsed.append(self._parse_track(track_data))
+        return parsed
 
-    def get_playlist_tracks(self, playlist_id: str) -> list[IndividualTrack]:
+    def get_playlist_tracks(self, playlist_id: str) -> list[ParsedTrack]:
         results = self._paginate(self.client.playlist_items, playlist_id)
-        tracks: list[IndividualTrack] = []
+        parsed: list[ParsedTrack] = []
 
         for item in results:
             track_data = item["track"]
             if track_data:
-                tracks.append(self._parse_track(track_data))
-        return tracks
+                parsed.append(self._parse_track(track_data))
+        return parsed

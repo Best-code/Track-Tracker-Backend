@@ -1,0 +1,36 @@
+"""
+Constants for TikTok ingestion.
+"""
+
+HASHTAGS = [
+    "newmusic",
+    "unreleased",
+    "underratedartist",
+    "indiemusic",
+    "newartist",
+    "unsigned",
+    "outnow",
+    "firstsingle",
+    "emergingartist",
+    "undergroundmusic",
+    "viral",
+    "trending",
+    "hiphop",
+    "rnb",
+    "pop",
+    "alternative",
+    "lofi",
+    "edm",
+    "newrelease",
+    "musicdiscovery",
+    "countrymusic",
+    "gamingmusic",
+    "metalmusic",
+    "jazzmusic",
+    "classicalmusic",
+    "kpop",
+    "latinmusic",
+    "punkrock",
+    "soulmusic",
+    "chillmusic",
+]

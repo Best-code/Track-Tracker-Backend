@@ -30,12 +30,11 @@ def setup_logging(verbose: bool = False) -> None:
 
 def cmd_ingest(args: argparse.Namespace) -> int:
     """Run Spotify ingestion pipeline."""
-    from app.ingestion.spotify.spotify_to_db import ingest_new_releases
+    import asyncio
+    from app.ingestion.pipeline import run_pipeline
 
-    result = ingest_new_releases(limit=args.limit)
-    print(
-        f"Ingested {result.tracks_processed} tracks, {result.snapshots_created} snapshots"
-    )
+    result = asyncio.run(run_pipeline())
+    print(f"Ingested {result.tracks_processed} tracks")
 
     if result.errors > 0:
         print(f"Encountered {result.errors} errors during ingestion")
