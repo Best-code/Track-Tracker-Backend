@@ -11,6 +11,7 @@ from sqlalchemy import (
     Boolean,
     JSON,
     ForeignKey,
+    Index,
     TIMESTAMP,
 )
 from sqlalchemy.orm import declarative_base, relationship
@@ -112,6 +113,16 @@ class TrackSnapshot(Base):
     track_id = Column(Integer, ForeignKey("track.id"), nullable=False)
     spotify_streams = Column(BigInteger, nullable=True)  # scraped from open.spotify.com
     recorded_at = Column(TIMESTAMP, nullable=False, server_default="now()")
+
+    # Composite index for time-series lookups in app/db/query.py
+    # (filter by track_id, order by recorded_at)
+    __table_args__ = (
+        Index(
+            "ix_track_snapshot_track_id_recorded_at",
+            "track_id",
+            "recorded_at",
+        ),
+    )
 
     # Relationship
     track = relationship("Track", back_populates="snapshots")
