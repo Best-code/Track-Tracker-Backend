@@ -151,6 +151,32 @@ def get_track_stats(track_id: int, session: Session) -> dict | None:
     }
 
 
+def get_library_stats(session: Session) -> dict:
+    """Return total track count and sum of latest stream counts across all tracks."""
+    latest_sq = (
+        session.query(
+            TrackSnapshot.track_id,
+            func.max(TrackSnapshot.recorded_at).label("ts"),
+        )
+        .group_by(TrackSnapshot.track_id)
+        .subquery()
+    )
+    LatestSnap = aliased(TrackSnapshot)
+    total_streams = (
+        session.query(func.sum(LatestSnap.spotify_streams))
+        .join(
+            latest_sq,
+            and_(
+                LatestSnap.track_id == latest_sq.c.track_id,
+                LatestSnap.recorded_at == latest_sq.c.ts,
+            ),
+        )
+        .scalar()
+    ) or 0
+    total_tracks = session.query(func.count(Track.id)).scalar()
+    return {"total_tracks": total_tracks, "total_streams": total_streams}
+
+
 def get_track_snapshots(track_id: int, session: Session, days: int = 30) -> list[dict]:
     """Return snapshots for a track recorded within the last `days` days, oldest first."""
     cutoff = datetime.utcnow() - timedelta(days=days)
@@ -264,15 +290,6 @@ def get_top_tracks(
         .outerjoin(primary_artist_sq, Track.id == primary_artist_sq.c.track_id)
     )
 
-    if search:
-        term = f"%{search.lower()}%"
-        query = query.filter(
-            or_(
-                func.lower(Track.name).like(term),
-                func.lower(primary_artist_sq.c.artist_name).like(term),
-            )
-        )
-
     rows = query.all()
 
     # Deduplicate by track_id — multiple snapshot matches can produce duplicate rows
@@ -315,7 +332,16 @@ def get_top_tracks(
         reverse=True,
     )
 
-    for i, item in enumerate(results[:limit], 1):
+    # Assign global ranks before filtering so search results keep their true rank
+    for i, item in enumerate(results, 1):
         item["rank"] = i
+
+    if search:
+        term = search.lower()
+        results = [
+            r for r in results
+            if (r["track_name"] and term in r["track_name"].lower())
+            or (r["artist_name"] and term in r["artist_name"].lower())
+        ]
 
     return results[:limit]

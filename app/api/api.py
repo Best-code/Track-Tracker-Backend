@@ -18,7 +18,7 @@ from .config import APP_CONFIG, CORS_CONFIG
 from ..db.place_holder_users import (
     fake_users_db,
 )  # This is a placeholder just so I could test the OAuth stuff
-from ..db.query import get_top_tracks, get_track_snapshots, get_track_stats
+from ..db.query import get_library_stats, get_top_tracks, get_track_snapshots, get_track_stats
 from ..db.session import get_db
 from .models import TrackGrowthStats, TrackListResponse, TrackSnapshotsResponse, UserInDB
 
@@ -68,7 +68,8 @@ def list_tracks(
     Optional ?limit= caps the result count (default 50).
     """
     tracks = get_top_tracks(session=db, limit=limit, search=q)
-    return {"tracks": tracks, "count": len(tracks)}
+    lib = get_library_stats(session=db)
+    return {"tracks": tracks, "count": len(tracks), "total": lib["total_tracks"], "total_streams": lib["total_streams"]}
 
 
 @app.get("/tracks/{track_id}/snapshots", response_model=TrackSnapshotsResponse)
